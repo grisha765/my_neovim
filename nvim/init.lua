@@ -280,6 +280,16 @@ end
 -- Установка строки состояния вкладок
 vim.o.tabline = '%!v:lua.tabline()'
 
+-- Запуск файлового менеджера при старте Neovim, если не открываются файлы
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        if #vim.fn.argv() == 0 then 
+            _G.open_file_manager()
+	    vim.cmd('tabonly') 
+        end
+    end,
+})
+
 -- Установка Lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then

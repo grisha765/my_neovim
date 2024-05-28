@@ -24,6 +24,7 @@ mkdir -p ~/.config/nvim && wget -O ~/.config/nvim/init.lua https://raw.githubuse
     - `Ctrl + C` to copy
     - `Ctrl + V` to paste
     - `Ctrl + X` to cut
+    - `Ctrl + Z` to undo
   - **Toggle Highlighting of Current Word**: Press `f` in normal mode.
   - **Open/Close Terminal**: Use `Ctrl + t` in normal mode.
   - **Simple File Manager**: Open with `Ctrl + n`.

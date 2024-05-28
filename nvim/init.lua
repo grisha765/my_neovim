@@ -182,6 +182,7 @@ vim.cmd([[
   augroup END
 ]])
 
+
 -- Простенький файловый менеджер для Neovim на Lua
 
 -- Глобальные переменные для стека каталогов
@@ -202,11 +203,25 @@ function _G.open_file_manager()
     -- Функция для отображения файлов и папок
     local function display_files()
         local files = vim.fn.readdir(cwd)
-        local lines = {}
+        local lines = { ".." }  -- Добавляем ".." для перехода на уровень выше
         for _, file in ipairs(files) do
             table.insert(lines, file)
         end
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+        
+        -- Установка курсора на первую строку
+        vim.api.nvim_win_set_cursor(0, {1, 0})
+        
+        -- Очистка предыдущих подсветок
+        vim.api.nvim_buf_clear_namespace(buf, -1, 0, -1)
+
+        -- Подсветка папок
+        for i, file in ipairs(lines) do
+            local filepath = cwd .. '/' .. file
+            if file == ".." or vim.fn.isdirectory(filepath) == 1 then
+                vim.api.nvim_buf_add_highlight(buf, -1, 'Directory', i - 1, 0, -1)
+            end
+        end
     end
     
     -- Отображение файлов и папок
@@ -219,6 +234,17 @@ function _G.open_file_manager()
         local cursor_pos = vim.api.nvim_win_get_cursor(0)
         local line_num = cursor_pos[1]
         local filename = vim.api.nvim_buf_get_lines(buf, line_num - 1, line_num, false)[1]
+        
+        if filename == ".." then
+            local parent_dir = vim.fn.fnamemodify(cwd, ":h")
+            if parent_dir ~= cwd then
+                table.insert(dir_stack, cwd)
+                cwd = parent_dir
+                display_files()
+            end
+            return
+        end
+        
         local filepath = cwd .. '/' .. filename
         if vim.fn.isdirectory(filepath) == 1 then
             table.insert(dir_stack, cwd)
@@ -236,6 +262,12 @@ function _G.open_file_manager()
         if #dir_stack > 0 then
             cwd = table.remove(dir_stack)
             display_files()
+        else
+            local parent_dir = vim.fn.fnamemodify(cwd, ":h")
+            if parent_dir ~= cwd then
+                cwd = parent_dir
+                display_files()
+            end
         end
     end
 
@@ -243,11 +275,24 @@ function _G.open_file_manager()
     vim.api.nvim_buf_set_keymap(buf, 'n', '<CR>', ':lua _G.on_enter()<CR>', { noremap = true, silent = true })
     
     -- Привязка нажатия Backspace к функции go_back
-    vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', ':lua _G.go_back()<CR>', { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(buf, 'n', '<BS>', ':lua _G.go_back()<CR>', { noremap = true, silent = true })
 end
 
 -- Привязка Ctrl+n к функции открытия файлового менеджера
 vim.api.nvim_set_keymap('n', '<C-n>', ':lua _G.open_file_manager()<CR>', { noremap = true, silent = true })
+
+-- Определение подсветки для папок
+vim.cmd('highlight Directory guifg=LightBlue')
+
+-- Запуск файлового менеджера при старте Neovim, если не открываются файлы
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        if #vim.fn.argv() == 0 then 
+            _G.open_file_manager()
+	    vim.cmd('tabonly') 
+        end
+    end,
+})
 
 -- Настройка отображения вкладок в Neovim
 
@@ -287,16 +332,6 @@ end
 
 -- Установка строки состояния вкладок
 vim.o.tabline = '%!v:lua.tabline()'
-
--- Запуск файлового менеджера при старте Neovim, если не открываются файлы
-vim.api.nvim_create_autocmd("VimEnter", {
-    callback = function()
-        if #vim.fn.argv() == 0 then 
-            _G.open_file_manager()
-	    vim.cmd('tabonly') 
-        end
-    end,
-})
 
 -- Установка Lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

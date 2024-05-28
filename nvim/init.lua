@@ -22,6 +22,14 @@ vim.api.nvim_set_keymap('c', '<C-v>', '<C-r>+', { noremap = true, silent = true 
 -- Настройка Ctrl + X для вырезания в системный буфер обмена
 vim.api.nvim_set_keymap('v', '<C-x>', '"+d', { noremap = true, silent = true })
 
+-- Настройки для отмены и повторения операций
+
+-- Настройки для нормального режима
+vim.api.nvim_set_keymap('n', '<C-z>', 'u', { noremap = true, silent = true })
+
+-- Настройки для вставочного режима
+vim.api.nvim_set_keymap('i', '<C-z>', '<Esc>ui', { noremap = true, silent = true })
+
 -- Функция для включения/выключения подсветки всех вхождений слова под курсором
 function _G.toggle_highlight_word()
   if vim.b.highlight_word_enabled then

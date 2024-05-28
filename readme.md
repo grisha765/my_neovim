@@ -16,7 +16,7 @@ mkdir -p ~/.config/nvim && wget -O ~/.config/nvim/init.lua https://raw.githubuse
 
 ### Key Features
 
-- **Line Numbers**: Enables line numbers for better code navigation.
+- ***Code Completion**: Code completion in popular programming languages.
 - **Syntax Highlighting**: Turns on syntax highlighting for better code readability.
 - **Custom Key Mappings**:
   - **Switch Between Normal and Insert Mode**: Use the `INSERT` key.

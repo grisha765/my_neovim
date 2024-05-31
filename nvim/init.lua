@@ -30,6 +30,23 @@ vim.api.nvim_set_keymap('n', '<C-z>', 'u', { noremap = true, silent = true })
 -- Настройки для вставочного режима
 vim.api.nvim_set_keymap('i', '<C-z>', '<Esc>ui', { noremap = true, silent = true })
 
+-- Эмуляция "cd /path/to && nvim file"
+
+-- Создать группу автокоманд
+vim.api.nvim_create_augroup('ChangeDirectory', { clear = true })
+
+-- Определить автокоманду
+vim.api.nvim_create_autocmd('BufEnter', {
+  group = 'ChangeDirectory',
+  pattern = '*',
+  callback = function()
+    -- Get the directory of the currently opened file
+    local file_dir = vim.fn.expand('%:p:h')
+    -- Change to that directory
+    vim.cmd('cd ' .. file_dir)
+  end,
+})
+
 -- Функция для включения/выключения подсветки всех вхождений слова под курсором
 function _G.toggle_highlight_word()
   if vim.b.highlight_word_enabled then
@@ -212,11 +229,27 @@ vim.cmd([[
 
 -- Глобальные переменные для стека каталогов
 local dir_stack = {}
+local cwd = '' -- Текущий рабочий каталог
+
+-- Функция для получения директории активного файла
+local function get_active_file_directory()
+    local current_file = vim.fn.expand('%:p')
+    if current_file == '' then
+        return vim.fn.getcwd()
+    else
+        return vim.fn.fnamemodify(current_file, ':h')
+    end
+end
+
+-- Функция для обновления строки состояния
+local function update_statusline()
+    vim.api.nvim_set_option('statusline', 'Path: ' .. cwd)
+end
 
 -- Функция для открытия окна файлового менеджера в новой вкладке
 function _G.open_file_manager()
-    -- Получение текущего пути
-    local cwd = vim.fn.getcwd()
+    -- Получение директории активного файла
+    cwd = get_active_file_directory()
     
     -- Команда для открытия новой вкладки
     vim.cmd('tabnew')
@@ -251,6 +284,7 @@ function _G.open_file_manager()
     
     -- Отображение файлов и папок
     display_files()
+    update_statusline() -- Обновление строки состояния
     
     -- Функция для обработки нажатия Enter на строке
     function _G.on_enter()
@@ -266,6 +300,7 @@ function _G.open_file_manager()
                 table.insert(dir_stack, cwd)
                 cwd = parent_dir
                 display_files()
+                update_statusline() -- Обновление строки состояния
             end
             return
         end
@@ -275,6 +310,7 @@ function _G.open_file_manager()
             table.insert(dir_stack, cwd)
             cwd = filepath
             display_files()
+            update_statusline() -- Обновление строки состояния
         else
             vim.cmd('edit ' .. filepath)
         end
@@ -287,11 +323,13 @@ function _G.open_file_manager()
         if #dir_stack > 0 then
             cwd = table.remove(dir_stack)
             display_files()
+            update_statusline() -- Обновление строки состояния
         else
             local parent_dir = vim.fn.fnamemodify(cwd, ":h")
             if parent_dir ~= cwd then
                 cwd = parent_dir
                 display_files()
+                update_statusline() -- Обновление строки состояния
             end
         end
     end
@@ -314,7 +352,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     callback = function()
         if #vim.fn.argv() == 0 then 
             _G.open_file_manager()
-	    vim.cmd('tabonly') 
+            vim.cmd('tabonly') 
         end
     end,
 })

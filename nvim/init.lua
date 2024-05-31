@@ -40,10 +40,15 @@ vim.api.nvim_create_autocmd('BufEnter', {
   group = 'ChangeDirectory',
   pattern = '*',
   callback = function()
-    -- Get the directory of the currently opened file
-    local file_dir = vim.fn.expand('%:p:h')
-    -- Change to that directory
-    vim.cmd('cd ' .. file_dir)
+    -- Get the current buffer
+    local buf = vim.api.nvim_get_current_buf()
+    -- Check if the buffer is not a terminal
+    if vim.api.nvim_buf_get_option(buf, 'buftype') ~= 'terminal' then
+      -- Get the directory of the currently opened file
+      local file_dir = vim.fn.expand('%:p:h')
+      -- Change to that directory
+      vim.cmd('cd ' .. file_dir)
+    end
   end,
 })
 

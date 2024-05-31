@@ -208,11 +208,27 @@ vim.api.nvim_exec([[
   augroup END
 ]], false)
 
--- Опционально, можно настроить автокоманду для закрытия терминала, когда он не нужен
+-- Автокоманда для закрытия терминала, когда он не нужен
 vim.api.nvim_exec([[
   augroup TerminalClose
     autocmd!
     autocmd TermClose * lua _G.terminal_buf = nil
+  augroup END
+]], false)
+
+-- Функция для скрытия терминала при переключении вкладок
+function _G.hide_terminal_on_tab_change()
+  if terminal_win and vim.api.nvim_win_is_valid(terminal_win) then
+    vim.api.nvim_win_hide(terminal_win)
+    terminal_win = nil
+  end
+end
+
+-- Автокоманда для скрытия терминала при переключении вкладок
+vim.api.nvim_exec([[
+  augroup TerminalHideOnTabChange
+    autocmd!
+    autocmd TabEnter * lua hide_terminal_on_tab_change()
   augroup END
 ]], false)
 
@@ -251,7 +267,6 @@ vim.cmd([[
     autocmd BufEnter,BufWritePost,TextChanged,TextChangedI * lua highlight_color_codes()
   augroup END
 ]])
-
 
 -- Простенький файловый менеджер для Neovim на Lua
 

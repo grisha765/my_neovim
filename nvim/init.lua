@@ -98,6 +98,26 @@ local function git_commit_push(commit_message)
   local git_push_cmd = "git push origin " .. current_branch
   local push_result = vim.fn.systemlist(git_push_cmd)
 
+  -- Функция для выполнения git pull --rebase и повторной попытки git push
+  local function handle_push_error()
+    vim.ui.input({ prompt = 'Ошибка при push. Хотите выполнить git pull --rebase? [Y/n] ' }, function(input)
+      if input == nil or input:lower() == 'y' or input == '' then
+        local git_pull_cmd = "git pull --rebase"
+        local pull_result = vim.fn.systemlist(git_pull_cmd)
+        vim.notify(table.concat(pull_result, "\n"), vim.log.levels.INFO)
+
+        if vim.v.shell_error == 0 then
+          push_result = vim.fn.systemlist(git_push_cmd)
+          vim.notify(table.concat(push_result, "\n"), vim.log.levels.INFO)
+        else
+          vim.notify("git pull --rebase завершился с ошибкой", vim.log.levels.ERROR)
+        end
+      else
+        vim.notify("git push отменен пользователем", vim.log.levels.INFO)
+      end
+    end)
+  end
+
   -- Вывод результата в командной строке
   if #add_result > 0 then
     vim.notify(table.concat(add_result, "\n"), vim.log.levels.INFO)
@@ -109,6 +129,9 @@ local function git_commit_push(commit_message)
 
   if #push_result > 0 then
     vim.notify(table.concat(push_result, "\n"), vim.log.levels.INFO)
+    if vim.v.shell_error ~= 0 then
+      handle_push_error()
+    end
   end
 end
 

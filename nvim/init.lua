@@ -525,15 +525,6 @@ for _, lsp in ipairs(servers) do
       vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
       vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
     end,
-    settings = {
-      python = {
-        analysis = {
-          diagnosticSeverityOverrides = {
-            reportMissingImports = "none"
-          }
-        }
-      }
-    }
   }
 end
 -- Настройка Treesitter

@@ -471,6 +471,16 @@ require('lazy').setup({
 })
 
 local lspconfig = require('lspconfig')
+
+-- Настройка диагностических сообщений
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = '', -- Установите префикс в пустую строку
+    spacing = 0,
+  },
+  signs = false, -- Отключите знаки на полях
+})
+
 local cmp = require('cmp')
 
 -- Настройка nvim-cmp
@@ -527,6 +537,7 @@ for _, lsp in ipairs(servers) do
     end,
   }
 end
+
 -- Настройка Treesitter
 require('nvim-treesitter.configs').setup {
   ensure_installed = { "c", "cpp", "lua", "python", "javascript", "html", "css", "json" },

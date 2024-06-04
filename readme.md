@@ -29,3 +29,4 @@ mkdir -p ~/.config/nvim && wget -O ~/.config/nvim/init.lua https://raw.githubuse
   - **Open/Close Terminal**: Use `Ctrl + t` in normal mode.
   - **Simple File Manager**: Open with `Ctrl + n`.
   - **Navigate Tabs**: Use `Tab` and `Shift + Tab` to switch between tabs.
+  - **LazyGit**: Use `lg` to open LazyGit.

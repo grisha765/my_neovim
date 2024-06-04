@@ -208,14 +208,6 @@ vim.api.nvim_exec([[
   augroup END
 ]], false)
 
--- Автокоманда для закрытия терминала, когда он не нужен
-vim.api.nvim_exec([[
-  augroup TerminalClose
-    autocmd!
-    autocmd TermClose * lua _G.terminal_buf = nil
-  augroup END
-]], false)
-
 -- Функция для скрытия терминала при переключении вкладок
 function _G.hide_terminal_on_tab_change()
   if terminal_win and vim.api.nvim_win_is_valid(terminal_win) then

@@ -466,6 +466,11 @@ require('lazy').setup({
   'L3MON4D3/LuaSnip', -- Плагин для сниппетов
   'saadparwaiz1/cmp_luasnip', -- Источник для LuaSnip
   { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' },
+  { 'kdheepak/lazygit.nvim', 
+		cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },
+		dependencies = { "nvim-lua/plenary.nvim", },
+		keys = { { "lg", "<cmd>LazyGit<cr>", desc = "LazyGit" } }
+	}, -- Для git
   -- VS Code Color Schemes
   'Mofiqul/vscode.nvim',
 })

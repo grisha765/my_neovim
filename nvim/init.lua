@@ -470,7 +470,7 @@ require('lazy').setup({
 		cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },
 		dependencies = { "nvim-lua/plenary.nvim", },
 		keys = { { "lg", "<cmd>LazyGit<cr>", desc = "LazyGit" } }
-	}, -- Для git
+	}, -- Плагин для удобного управления git
   -- VS Code Color Schemes
   'Mofiqul/vscode.nvim',
 })

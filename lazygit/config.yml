@@ -1,0 +1,4 @@
+gui:
+  language: en
+git:  
+  truncateCopiedCommitHashesTo: 8

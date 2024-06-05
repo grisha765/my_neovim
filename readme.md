@@ -13,15 +13,15 @@ This is a custom Neovim configuration script written in Lua. It includes various
 ***Download utils***
 
 - **Arch Linux**: 
-  `sudo pacman -S neovim lazygit nodejs npm`
+  - `sudo pacman -S neovim lazygit nodejs npm`
 - **Debian**: 
-  `sudo apt update && sudo apt install neovim nodejs npm && sudo add-apt-repository ppa:lazygit-team/release && sudo apt update && sudo apt install lazygit`
+  - `sudo apt update && sudo apt install neovim nodejs npm && sudo add-apt-repository ppa:lazygit-team/release && sudo apt update && sudo apt install lazygit`
 - **Fedora**: 
-  `sudo dnf install neovim nodejs npm && sudo dnf copr enable atim/lazygit -y && sudo dnf install lazygit`
+  - `sudo dnf install neovim nodejs npm && sudo dnf copr enable atim/lazygit -y && sudo dnf install lazygit`
 - **macOS**: 
-  `brew install neovim lazygit node`
+  - `brew install neovim lazygit node`
 - **Termux**: 
-  `pkg install neovim lazygit nodejs`
+  - `pkg install neovim lazygit nodejs`
 
 ***Download configs***
 
@@ -34,11 +34,11 @@ mkdir -p ~/.config/nvim && mkdir -p ~/.config/lazygit && wget -O ~/.config/nvim/
 **Download utils**
 
 - **Scoop**: 
-  `scoop install neovim lazygit gcc nodejs`
+  - `scoop install neovim lazygit gcc nodejs`
 - **Chocolatey**: 
-  `choco install neovim lazygit mingw nodejs`
+  - `choco install neovim lazygit mingw nodejs`
 - **Winget**: 
-  `winget install Neovim.Neovim jesseduffield.lazygit GNU.GCC OpenJS.NodeJS`
+  - `winget install Neovim.Neovim jesseduffield.lazygit GNU.GCC OpenJS.NodeJS`
 
 ***Download configs***
 

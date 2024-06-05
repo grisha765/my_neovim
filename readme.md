@@ -11,7 +11,7 @@ This is a custom Neovim configuration script written in Lua. It includes various
 ***Install Linux***
 
 ```shell
-mkdir -p ~/.config/nvim && wget -O ~/.config/nvim/init.lua https://raw.githubusercontent.com/grisha765/my_neovim/main/nvim/init.lua && nvim
+mkdir -p ~/.config/nvim && mkdir -p ~/.config/lazygit && wget -O ~/.config/nvim/init.lua https://raw.githubusercontent.com/grisha765/my_neovim/main/nvim/init.lua && wget -O ~/.config/lazygit/config.yml https://raw.githubusercontent.com/grisha765/my_neovim/main/lazygit/config.yml && nvim
 ```
 
 ### Key Features
@@ -29,4 +29,4 @@ mkdir -p ~/.config/nvim && wget -O ~/.config/nvim/init.lua https://raw.githubuse
   - **Open/Close Terminal**: Use `Ctrl + t` in normal mode.
   - **Simple File Manager**: Open with `Ctrl + n`.
   - **Navigate Tabs**: Use `Tab` and `Shift + Tab` to switch between tabs.
-  - **LazyGit**: Use `lg` to open LazyGit.
+  - **LazyGit**: Use `lg` to open LazyGit in normal mode.

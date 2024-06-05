@@ -280,7 +280,7 @@ end
 -- Функция для обновления строки состояния
 local function update_statusline()
     if vim.api.nvim_get_current_buf() == file_manager_buf then
-        vim.api.nvim_set_option('statusline', 'File Manager - Path: ' .. cwd)
+        vim.api.nvim_set_option('statusline', 'Path: ' .. cwd)
     else
         vim.api.nvim_set_option('statusline', '%F')
     end
@@ -392,10 +392,14 @@ vim.api.nvim_create_autocmd("BufEnter", {
     callback = update_statusline
 })
 
--- Запуск файлового менеджера при старте Neovim, если не открываются файлы
+-- Запуск файлового менеджера при старте Neovim, если передана директория
 vim.api.nvim_create_autocmd("VimEnter", {
     callback = function()
-        if #vim.fn.argv() == 0 then 
+        local arg = vim.fn.argv(0)
+        if arg ~= '' and vim.fn.isdirectory(arg) == 1 then
+            _G.open_file_manager(arg)
+            vim.cmd('tabonly')
+        elseif #vim.fn.argv() == 0 then
             _G.open_file_manager()
             vim.cmd('tabonly') 
         end

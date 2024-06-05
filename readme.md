@@ -31,7 +31,7 @@ mkdir -p ~/.config/nvim && mkdir -p ~/.config/lazygit && wget -O ~/.config/nvim/
 
 ### Install Windows
 
-**Download utils**
+***Download utils***
 
 - **Scoop**: 
   - `scoop install neovim lazygit gcc nodejs`

@@ -265,6 +265,7 @@ vim.cmd([[
 -- Глобальные переменные для стека каталогов
 local dir_stack = {}
 local cwd = '' -- Текущий рабочий каталог
+local file_manager_buf = nil -- Буфер файлового менеджера
 
 -- Функция для получения директории активного файла
 local function get_active_file_directory()
@@ -278,7 +279,11 @@ end
 
 -- Функция для обновления строки состояния
 local function update_statusline()
-    vim.api.nvim_set_option('statusline', 'Path: ' .. cwd)
+    if vim.api.nvim_get_current_buf() == file_manager_buf then
+        vim.api.nvim_set_option('statusline', 'File Manager - Path: ' .. cwd)
+    else
+        vim.api.nvim_set_option('statusline', '%F')
+    end
 end
 
 -- Функция для открытия окна файлового менеджера в новой вкладке
@@ -290,8 +295,8 @@ function _G.open_file_manager()
     vim.cmd('tabnew')
     
     -- Создание буфера
-    local buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_win_set_buf(0, buf)
+    file_manager_buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_win_set_buf(0, file_manager_buf)
     
     -- Функция для отображения файлов и папок
     local function display_files()
@@ -300,19 +305,19 @@ function _G.open_file_manager()
         for _, file in ipairs(files) do
             table.insert(lines, file)
         end
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+        vim.api.nvim_buf_set_lines(file_manager_buf, 0, -1, false, lines)
         
         -- Установка курсора на первую строку
         vim.api.nvim_win_set_cursor(0, {1, 0})
         
         -- Очистка предыдущих подсветок
-        vim.api.nvim_buf_clear_namespace(buf, -1, 0, -1)
+        vim.api.nvim_buf_clear_namespace(file_manager_buf, -1, 0, -1)
 
         -- Подсветка папок
         for i, file in ipairs(lines) do
             local filepath = cwd .. '/' .. file
             if file == ".." or vim.fn.isdirectory(filepath) == 1 then
-                vim.api.nvim_buf_add_highlight(buf, -1, 'Directory', i - 1, 0, -1)
+                vim.api.nvim_buf_add_highlight(file_manager_buf, -1, 'Directory', i - 1, 0, -1)
             end
         end
     end
@@ -324,10 +329,10 @@ function _G.open_file_manager()
     -- Функция для обработки нажатия Enter на строке
     function _G.on_enter()
         local current_buf = vim.api.nvim_get_current_buf()
-        if current_buf ~= buf then return end  -- Проверка, чтобы функция выполнялась только для текущего буфера
+        if current_buf ~= file_manager_buf then return end  -- Проверка, чтобы функция выполнялась только для текущего буфера
         local cursor_pos = vim.api.nvim_win_get_cursor(0)
         local line_num = cursor_pos[1]
-        local filename = vim.api.nvim_buf_get_lines(buf, line_num - 1, line_num, false)[1]
+        local filename = vim.api.nvim_buf_get_lines(file_manager_buf, line_num - 1, line_num, false)[1]
         
         if filename == ".." then
             local parent_dir = vim.fn.fnamemodify(cwd, ":h")
@@ -354,7 +359,7 @@ function _G.open_file_manager()
     -- Функция для возврата назад
     function _G.go_back()
         local current_buf = vim.api.nvim_get_current_buf()
-        if current_buf ~= buf then return end  -- Проверка, чтобы функция выполнялась только для текущего буфера
+        if current_buf ~= file_manager_buf then return end  -- Проверка, чтобы функция выполнялась только для текущего буфера
         if #dir_stack > 0 then
             cwd = table.remove(dir_stack)
             display_files()
@@ -370,10 +375,10 @@ function _G.open_file_manager()
     end
 
     -- Привязка нажатия Enter к функции on_enter
-    vim.api.nvim_buf_set_keymap(buf, 'n', '<CR>', ':lua _G.on_enter()<CR>', { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', '<CR>', ':lua _G.on_enter()<CR>', { noremap = true, silent = true })
     
     -- Привязка нажатия Backspace к функции go_back
-    vim.api.nvim_buf_set_keymap(buf, 'n', '<BS>', ':lua _G.go_back()<CR>', { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', '<BS>', ':lua _G.go_back()<CR>', { noremap = true, silent = true })
 end
 
 -- Привязка Ctrl+n к функции открытия файлового менеджера
@@ -381,6 +386,11 @@ vim.api.nvim_set_keymap('n', '<C-n>', ':lua _G.open_file_manager()<CR>', { norem
 
 -- Определение подсветки для папок
 vim.cmd('highlight Directory guifg=LightBlue')
+
+-- Автокоманда для обновления строки состояния при смене буфера
+vim.api.nvim_create_autocmd("BufEnter", {
+    callback = update_statusline
+})
 
 -- Запуск файлового менеджера при старте Neovim, если не открываются файлы
 vim.api.nvim_create_autocmd("VimEnter", {

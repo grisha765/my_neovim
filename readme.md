@@ -68,5 +68,6 @@ pip install pyright
   - **Toggle Highlighting of Current Word**: Press `f` in normal mode.
   - **Open/Close Terminal**: Use `Ctrl + t` in normal mode.
   - **Simple File Manager**: Open with `Ctrl + n`.
+  - **Normal file saving**: Use `Ctrl + s`.
   - **Navigate Tabs**: Use `Tab` and `Shift + Tab` to switch between tabs.
   - **LazyGit**: Use `lg` to open LazyGit in normal mode.

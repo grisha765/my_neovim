@@ -30,6 +30,14 @@ vim.api.nvim_set_keymap('n', '<C-z>', 'u', { noremap = true, silent = true })
 -- Настройки для вставочного режима
 vim.api.nvim_set_keymap('i', '<C-z>', '<Esc>ui', { noremap = true, silent = true })
 
+-- Настройка сохранения файла
+
+-- Настраиваем карту клавиш для нормального режима
+vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap = true, silent = true })
+
+-- Настраиваем карту клавиш для режима вставки
+vim.api.nvim_set_keymap('i', '<C-s>', '<Esc>:w<CR>', { noremap = true, silent = true })
+
 -- Эмуляция "cd /path/to && nvim file"
 
 -- Создать группу автокоманд

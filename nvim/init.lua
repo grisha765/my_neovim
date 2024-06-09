@@ -79,7 +79,7 @@ function _G.toggle_highlight_word()
 end
 
 -- Привязываем функцию к клавише 'f' (в нормальном режиме)
-vim.api.nvim_set_keymap('n', 'f', ':lua toggle_highlight_word()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'f', ':lua _G.toggle_highlight_word()<CR>', { noremap = true, silent = true })
 
 -- Функция для выполнения команд Git и отображения результата в командной строке
 local function git_commit_push(commit_message)
@@ -539,7 +539,7 @@ cmp.setup({
 })
 
 -- Настройка LSP серверов
-local servers = { 'pyright' }
+local servers = { 'pyright', 'tsserver'}
 
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
@@ -559,7 +559,7 @@ end
 
 -- Настройка Treesitter
 require('nvim-treesitter.configs').setup {
-  ensure_installed = { "c", "cpp", "lua", "python", "javascript", "html", "css", "json" },
+  ensure_installed = { "c", "cpp", "lua", "python", "javascript", "html", "css", "json", "javascript", "typescript", "tsx" },
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,

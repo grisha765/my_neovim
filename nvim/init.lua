@@ -38,6 +38,27 @@ vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap = true, silent = true 
 -- Настраиваем карту клавиш для режима вставки
 vim.api.nvim_set_keymap('i', '<C-s>', '<Esc>:w<CR>', { noremap = true, silent = true })
 
+-- Создаем команды для Tab и Shift+Tab в визуальном режиме
+vim.api.nvim_set_keymap('v', '<Tab>', '>gv', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
+
+-- Устанавливаем глобальные настройки по умолчанию для всех файлов
+vim.opt.expandtab = true  -- Преобразовывать табы в пробелы
+vim.opt.tabstop = 2       -- Количество пробелов, соответствующих одному табу
+vim.opt.shiftwidth = 2    -- Количество пробелов для отступов
+
+-- Функция для установки отступов в Python файлах
+local function set_python_indent()
+  vim.bo.tabstop = 4
+  vim.bo.shiftwidth = 4
+end
+
+-- Автокоманда для настройки отступов в Python файлах
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "python",
+  callback = set_python_indent,
+})
+
 -- Эмуляция "cd /path/to && nvim file"
 
 -- Создать группу автокоманд

@@ -474,6 +474,77 @@ end
 -- Установка строки состояния вкладок
 vim.o.tabline = '%!v:lua.tabline()'
 
+-- GPT Функционал
+local function gpt_request(prompt)
+    -- Экранирование символов для использования в JSON
+    prompt = prompt:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n")
+
+    local cmd = string.format(
+        'curl -s http://127.0.0.1:8000/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer adminapi007" -d \'{"model": "gpt-3.5-duck", "messages": [{"role": "user", "content": "%s"}], "temperature": 0.7}\'',
+        prompt
+    )
+    local handle = io.popen(cmd)
+    local result = handle:read("*a")
+    handle:close()
+    return result
+end
+
+local function clean_response(content)
+    -- Удаление строк, содержащих "Copy Code" или "python"
+    local cleaned_lines = {}
+    for line in content:gmatch("[^\r\n]+") do
+        if not line:match("Copy Code") then
+            table.insert(cleaned_lines, line)
+        end
+    end
+    return table.concat(cleaned_lines, "\n")
+end
+
+vim.api.nvim_create_user_command('GPT', function(opts)
+    -- Получение диапазона выделенного текста
+    local start_pos = vim.fn.getpos("'<")
+    local end_pos = vim.fn.getpos("'>")
+    local start_line, start_col = start_pos[2], start_pos[3]
+    local end_line, end_col = end_pos[2], end_pos[3]
+
+    -- Получение выделенного текста
+    local lines = vim.fn.getline(start_line, end_line)
+    if #lines == 0 then return end
+    lines[#lines] = string.sub(lines[#lines], 1, end_col)
+    lines[1] = string.sub(lines[1], start_col)
+    local text = table.concat(lines, "\n")
+
+    -- Формирование запроса
+    local prompt = opts.args .. " " .. text .. "Твой ответ должен содержать только код. Код должен быть отдельно, а описание кода должно быть в комментариях."
+    local response = gpt_request(prompt)
+
+    -- Обработка ошибки при пустом ответе
+    if not response or response == "" then
+        vim.api.nvim_err_writeln("Error: Empty response from API")
+        return
+    end
+
+    -- Парсинг JSON-ответа
+    local decoded_response = vim.fn.json_decode(response)
+    if not decoded_response then
+        vim.api.nvim_err_writeln("Error: Unable to decode JSON response")
+        vim.api.nvim_err_writeln("Response: " .. response)
+        return
+    end
+
+    if not decoded_response['choices'] or not decoded_response['choices'][1] then
+        vim.api.nvim_err_writeln("Error: Invalid response format from API")
+        vim.api.nvim_err_writeln("Response: " .. response)
+        return
+    end
+
+    local content = decoded_response['choices'][1]['message']['content']
+    local cleaned_content = clean_response(content)
+
+    -- Вставка ответа в текущий буфер после выделенного текста
+    vim.api.nvim_buf_set_lines(0, end_line, end_line, false, vim.split(cleaned_content, "\n"))
+end, { range = true, nargs = '*' })
+
 -- Установка Lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then

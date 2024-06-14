@@ -474,76 +474,106 @@ end
 -- Установка строки состояния вкладок
 vim.o.tabline = '%!v:lua.tabline()'
 
--- GPT Функционал
-local function gpt_request(prompt)
-    -- Экранирование символов для использования в JSON
-    prompt = prompt:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n")
+-- Финкционал работы с GPT ботами
 
-    local cmd = string.format(
-        'curl -s http://127.0.0.1:8000/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer adminapi007" -d \'{"model": "gpt-3.5-duck", "messages": [{"role": "user", "content": "%s"}], "temperature": 0.7}\'',
-        prompt
+-- Функция для отправки запроса на API
+local function send_gpt_request(selected_text, additional_text, explanation, end_line)
+    local api_url = "http://127.0.0.1:8000/v1/chat/completions"
+    local api_key = "adminapi007"
+    local model = "gpt-3.5-duck"
+    local temperature = 0.7
+
+    -- Формирование данных для запроса
+    local request_data = {
+        model = model,
+        messages = {
+            {
+                role = "user",
+                content = additional_text .. "\n\n" .. selected_text .. "\n\n" .. explanation
+            }
+        },
+        temperature = temperature
+    }
+
+    -- Преобразование таблицы в JSON
+    local json_data = vim.fn.json_encode(request_data)
+
+    -- Запись JSON в файл
+    local temp_file = "/tmp/gpt_request.json"
+    local file = io.open(temp_file, "w")
+    if file then
+        file:write(json_data)
+        file:close()
+    else
+        print("Ошибка при создании временного файла")
+        return
+    end
+
+    -- Формирование команды curl для отправки файла
+    local curl_command = string.format(
+        "curl -s -X POST %s -H 'Content-Type: application/json' -H 'Authorization: Bearer %s' --data @%s",
+        api_url, api_key, temp_file
     )
-    local handle = io.popen(cmd)
+
+    -- Выполнить curl команду и получить результат
+    local handle = io.popen(curl_command)
     local result = handle:read("*a")
     handle:close()
-    return result
-end
 
-local function clean_response(content)
-    -- Удаление строк, содержащих "Copy Code" или "python"
-    local cleaned_lines = {}
-    for line in content:gmatch("[^\r\n]+") do
-        if not line:match("Copy Code") then
-            table.insert(cleaned_lines, line)
-        end
+    -- Удаление временного файла
+    os.remove(temp_file)
+
+    -- Разбор JSON ответа
+    local status_ok, response = pcall(vim.fn.json_decode, result)
+    if not status_ok then
+        print("Ошибка при декодировании ответа")
+        return
     end
-    return table.concat(cleaned_lines, "\n")
+
+    if response and response.choices and response.choices[1] and response.choices[1].message then
+        local reply = response.choices[1].message.content
+
+        -- Удаление "Copy Code" из ответа
+        reply = reply:gsub("Copy Code", "")
+
+        -- Разделение ответа на строки
+        local reply_lines = vim.split(reply, "\n", { trimempty = false })
+
+        -- Удаление второй, если они пустые
+        if #reply_lines >= 3 then
+            if reply_lines[2]:match("^%s*$") then
+                table.remove(reply_lines, 2)
+            end
+        end
+
+        -- Вставка ответа под выделенным текстом
+        vim.fn.append(end_line, reply_lines)
+    else
+        print("Ошибка при получении ответа от API")
+    end
 end
 
+-- Команда для отправки запроса на API
 vim.api.nvim_create_user_command('GPT', function(opts)
-    -- Получение диапазона выделенного текста
+    -- Получить выделенный текст
     local start_pos = vim.fn.getpos("'<")
     local end_pos = vim.fn.getpos("'>")
-    local start_line, start_col = start_pos[2], start_pos[3]
-    local end_line, end_col = end_pos[2], end_pos[3]
-
-    -- Получение выделенного текста
-    local lines = vim.fn.getline(start_line, end_line)
-    if #lines == 0 then return end
-    lines[#lines] = string.sub(lines[#lines], 1, end_col)
-    lines[1] = string.sub(lines[1], start_col)
-    local text = table.concat(lines, "\n")
-
-    -- Формирование запроса
-    local prompt = opts.args .. " " .. text .. "Твой ответ должен содержать только код. Код должен быть отдельно, а описание кода должно быть в комментариях."
-    local response = gpt_request(prompt)
-
-    -- Обработка ошибки при пустом ответе
-    if not response or response == "" then
-        vim.api.nvim_err_writeln("Error: Empty response from API")
-        return
+    local lines = vim.fn.getline(start_pos[2], end_pos[2])
+    if #lines > 0 then
+        lines[1] = string.sub(lines[1], start_pos[3])
+        lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
     end
+    local selected_text = table.concat(lines, "\n")
 
-    -- Парсинг JSON-ответа
-    local decoded_response = vim.fn.json_decode(response)
-    if not decoded_response then
-        vim.api.nvim_err_writeln("Error: Unable to decode JSON response")
-        vim.api.nvim_err_writeln("Response: " .. response)
-        return
-    end
+    -- Получить дополнительный текст из команды
+    local additional_text = opts.args
 
-    if not decoded_response['choices'] or not decoded_response['choices'][1] then
-        vim.api.nvim_err_writeln("Error: Invalid response format from API")
-        vim.api.nvim_err_writeln("Response: " .. response)
-        return
-    end
+    -- Определить пояснение
+    local explanation = "Твой ответ должен содержать только код. Описание кода должно быть в комментариях или док строках к функциям. Обязательно пиши хоть какие-то коментарии к коду, чтобы было легче понять и работать с ним."
 
-    local content = decoded_response['choices'][1]['message']['content']
-    local cleaned_content = clean_response(content)
-
-    -- Вставка ответа в текущий буфер после выделенного текста
-    vim.api.nvim_buf_set_lines(0, end_line, end_line, false, vim.split(cleaned_content, "\n"))
-end, { range = true, nargs = '*' })
+    -- Отправить запрос
+    send_gpt_request(selected_text, additional_text, explanation, end_pos[2])
+end, { nargs = 1, range = true })
 
 -- Установка Lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

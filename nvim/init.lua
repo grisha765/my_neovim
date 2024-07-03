@@ -4,6 +4,9 @@ vim.opt.number = true
 -- Изменить цвет фона
 -- vim.cmd('highlight Normal guibg=1E1E1E')
 
+-- Установить привязку клавиш 'jk' для выхода из режима вставки
+vim.api.nvim_set_keymap('i', 'jk', '<Esc>', { noremap = true, silent = true })
+
 -- Включить подсветку синтаксиса
 vim.cmd('syntax on')
 

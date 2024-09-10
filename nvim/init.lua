@@ -670,7 +670,7 @@ cmp.setup({
 })
 
 -- Настройка LSP серверов
-local servers = { 'pyright', 'tsserver'}
+local servers = { 'pyright', 'ts_ls'}
 
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {

@@ -298,6 +298,9 @@ vim.cmd([[
 local dir_stack = {}
 local cwd = '' -- Текущий рабочий каталог
 local file_manager_buf = nil -- Буфер файлового менеджера
+local selected_file = nil -- Выбранный для копирования/перемещения файл
+local selected_file_path = nil -- Полный путь к выбранному файлу
+local operation_mode = nil -- Режим "mv" или "cp"
 
 -- Функция для получения директории активного файла
 local function get_active_file_directory()
@@ -406,11 +409,107 @@ function _G.open_file_manager()
         end
     end
 
+    -- Функция для создания файла
+    function _G.create_file()
+        local filename = vim.fn.input('Enter new file name: ')
+        if filename ~= '' then
+            vim.fn.writefile({}, cwd .. '/' .. filename)
+            display_files()
+        end
+    end
+
+    -- Функция для создания директории
+    function _G.create_dir()
+        local dirname = vim.fn.input('Enter new directory name: ')
+        if dirname ~= '' then
+            vim.fn.mkdir(cwd .. '/' .. dirname)
+            display_files()
+        end
+    end
+
+    -- Функция для копирования или перемещения файла
+    function _G.start_operation(mode)
+        local cursor_pos = vim.api.nvim_win_get_cursor(0)
+        local line_num = cursor_pos[1]
+        selected_file = vim.api.nvim_buf_get_lines(file_manager_buf, line_num - 1, line_num, false)[1]
+        selected_file_path = cwd .. '/' .. selected_file -- Полный путь к выбранному файлу
+        operation_mode = mode
+        vim.api.nvim_buf_add_highlight(file_manager_buf, -1, 'Search', line_num - 1, 0, -1) -- Подсветка выбранного файла
+    end
+
+    -- Функция для вставки файла
+    function _G.paste_file()
+        if selected_file_path and operation_mode then
+            local new_name = vim.fn.input('Enter new name (default: ' .. selected_file .. '): ', selected_file)
+            local dest = cwd .. '/' .. new_name
+
+            if operation_mode == 'mv' then
+                vim.fn.rename(selected_file_path, dest)
+            elseif operation_mode == 'cp' then
+                vim.fn.system({'cp', '-r', selected_file_path, dest})
+            end
+
+            selected_file = nil
+            selected_file_path = nil
+            operation_mode = nil
+            display_files()
+        end
+    end
+
+    -- Функция для удаления файла (rm)
+    function _G.delete_file()
+        local cursor_pos = vim.api.nvim_win_get_cursor(0)
+        local line_num = cursor_pos[1]
+        local filename = vim.api.nvim_buf_get_lines(file_manager_buf, line_num - 1, line_num, false)[1]
+        local filepath = cwd .. '/' .. filename
+
+        local confirm = vim.fn.input('Do you really want to delete ' .. filename .. '? (y/N): ')
+        if confirm == 'y' then
+            vim.fn.delete(filepath)
+            display_files()
+        end
+    end
+
+    -- Функция для удаления директории с рекурсией (rm -rf)
+    function _G.delete_dir_recursive()
+        local cursor_pos = vim.api.nvim_win_get_cursor(0)
+        local line_num = cursor_pos[1]
+        local filename = vim.api.nvim_buf_get_lines(file_manager_buf, line_num - 1, line_num, false)[1]
+        local filepath = cwd .. '/' .. filename
+
+        local confirm = vim.fn.input('Do you really want to delete the directory ' .. filename .. ' and all its contents? (y/N): ')
+        if confirm == 'y' then
+            vim.fn.delete(filepath, 'rf')
+            display_files()
+        end
+    end
+
     -- Привязка нажатия Enter к функции on_enter
     vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', '<CR>', ':lua _G.on_enter()<CR>', { noremap = true, silent = true })
     
     -- Привязка нажатия Backspace к функции go_back
     vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', '<BS>', ':lua _G.go_back()<CR>', { noremap = true, silent = true })
+
+    -- Привязка для создания файла "t"
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 't', ':lua _G.create_file()<CR>', { noremap = true, silent = true })
+    
+    -- Привязка для создания директории "td"
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'td', ':lua _G.create_dir()<CR>', { noremap = true, silent = true })
+    
+    -- Привязка для начала копирования "cp"
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'cp', ':lua _G.start_operation("cp")<CR>', { noremap = true, silent = true })
+    
+    -- Привязка для начала перемещения "mv"
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'mv', ':lua _G.start_operation("mv")<CR>', { noremap = true, silent = true })
+    
+    -- Привязка для вставки файла "p"
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'p', ':lua _G.paste_file()<CR>', { noremap = true, silent = true })
+
+    -- Привязка для удаления файла "rm"
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'rm', ':lua _G.delete_file()<CR>', { noremap = true, silent = true })
+
+    -- Привязка для рекурсивного удаления директории "rmr"
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'rmr', ':lua _G.delete_dir_recursive()<CR>', { noremap = true, silent = true })
 end
 
 -- Привязка Ctrl+n к функции открытия файлового менеджера
@@ -418,6 +517,7 @@ vim.api.nvim_set_keymap('n', '<C-n>', ':lua _G.open_file_manager()<CR>', { norem
 
 -- Определение подсветки для папок
 vim.cmd('highlight Directory guifg=LightBlue')
+vim.cmd('highlight Search guifg=Yellow') -- Подсветка выбранного файла
 
 -- Автокоманда для обновления строки состояния при смене буфера
 vim.api.nvim_create_autocmd("BufEnter", {

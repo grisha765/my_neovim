@@ -437,22 +437,45 @@ function _G.open_file_manager()
         vim.api.nvim_buf_add_highlight(file_manager_buf, -1, 'Search', line_num - 1, 0, -1) -- Подсветка выбранного файла
     end
 
-    -- Функция для вставки файла
-    function _G.paste_file()
-        if selected_file_path and operation_mode then
-            local new_name = vim.fn.input('Enter new name (default: ' .. selected_file .. '): ', selected_file)
-            local dest = cwd .. '/' .. new_name
-
-            if operation_mode == 'mv' then
-                vim.fn.rename(selected_file_path, dest)
-            elseif operation_mode == 'cp' then
-                vim.fn.system({'cp', '-r', selected_file_path, dest})
-            end
-
+    -- Функция для отмены выделения файла и сброса режима операции
+    function _G.cancel_selection()
+        if selected_file or operation_mode then
             selected_file = nil
             selected_file_path = nil
             operation_mode = nil
+            -- Очистка подсветки
+            vim.api.nvim_buf_clear_namespace(file_manager_buf, -1, 0, -1)
+            -- Повторное отображение файлов, чтобы сбросить состояние
             display_files()
+        end
+    end
+
+    -- Функция для вставки файла (копирование или перемещение)
+    function _G.paste_file()
+        if selected_file_path and operation_mode then
+            local new_name = vim.fn.input('Enter new name (default: ' .. selected_file .. '): ', selected_file)
+
+            -- Если строка ввода не была отменена пользователем (нажатие Esc в процессе ввода)
+            if new_name ~= "" then
+                local dest = cwd .. '/' .. new_name
+
+                if operation_mode == 'mv' then
+                    vim.fn.rename(selected_file_path, dest)
+                elseif operation_mode == 'cp' then
+                    vim.fn.system({'cp', '-r', selected_file_path, dest})
+                end
+            end
+
+            -- Очистка состояния выбора и операции
+            selected_file = nil
+            selected_file_path = nil
+            operation_mode = nil
+
+            -- Повторное отображение файлов, чтобы обновить список
+            display_files()
+
+            -- Очищаем строку ввода после завершения
+            vim.cmd("normal :<C-u>")  -- Команда для очистки строки команд
         end
     end
 
@@ -501,6 +524,9 @@ function _G.open_file_manager()
     
     -- Привязка для начала перемещения "mv"
     vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'mv', ':lua _G.start_operation("mv")<CR>', { noremap = true, silent = true })
+
+    -- Привязка нажатия ESC для отмены выбора файла и операции
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', '<ESC>', ':lua _G.cancel_selection()<CR>', { noremap = true, silent = true })
     
     -- Привязка для вставки файла "p"
     vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'p', ':lua _G.paste_file()<CR>', { noremap = true, silent = true })

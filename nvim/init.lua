@@ -414,6 +414,8 @@ function _G.open_file_manager()
         local filename = vim.fn.input('Enter new file name: ')
         if filename ~= '' then
             vim.fn.writefile({}, cwd .. '/' .. filename)
+            -- Очищаем строку ввода после завершения
+            vim.cmd("normal :<C-u>")  -- Команда для очистки строки команд
             display_files()
         end
     end
@@ -423,6 +425,8 @@ function _G.open_file_manager()
         local dirname = vim.fn.input('Enter new directory name: ')
         if dirname ~= '' then
             vim.fn.mkdir(cwd .. '/' .. dirname)
+            -- Очищаем строку ввода после завершения
+            vim.cmd("normal :<C-u>")  -- Команда для очистки строки команд
             display_files()
         end
     end
@@ -491,6 +495,8 @@ function _G.open_file_manager()
             vim.fn.delete(filepath)
             display_files()
         end
+        -- Очищаем строку ввода после завершения
+        vim.cmd("normal :<C-u>")  -- Команда для очистки строки команд
     end
 
     -- Функция для удаления директории с рекурсией (rm -rf)
@@ -505,6 +511,8 @@ function _G.open_file_manager()
             vim.fn.delete(filepath, 'rf')
             display_files()
         end
+        -- Очищаем строку ввода после завершения
+        vim.cmd("normal :<C-u>")  -- Команда для очистки строки команд
     end
 
     -- Привязка нажатия Enter к функции on_enter

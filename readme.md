@@ -69,12 +69,11 @@ pip install pyright
   - **Open/Close Terminal**: Use `Ctrl + t` in normal mode.
   - **Simple File Manager**: Open with `Ctrl + n`.
     - **File Operations**:
-      - **Create File**: Press `t` and enter the file name.
+      - **Create File**: Press `tt` and enter the file name.
       - **Create Directory**: Press `td` and enter the directory name.
       - **Rename/Move File or Directory**: Select the file or directory, press `mv`, navigate to the new location, and press `p` to paste. Optionally, you can rename it during the move.
       - **Copy File or Directory**: Select the file or directory, press `cp`, navigate to the destination, and press `p` to paste. Optionally, you can rename it during the copy.
-      - **Delete File**: Press `rm` and confirm the deletion by typing `y` (default is `N` to avoid accidental deletion).
-      - **Delete Directory Recursively**: Press `rmr` and confirm the deletion of the directory and all its contents by typing `y` (default is `N`).
+      - **Delete Recursively**: Press `rm` and confirm the deletion of all its contents by typing `y` (default is `N`).
   - **Normal file saving**: Use `Ctrl + s`.
   - **Navigate Tabs**: Use `Tab` and `Shift + Tab` to switch between tabs.
   - **LazyGit**: Use `lg` to open LazyGit in normal mode.

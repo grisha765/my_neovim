@@ -483,30 +483,14 @@ function _G.open_file_manager()
         end
     end
 
-    -- Функция для удаления файла (rm)
-    function _G.delete_file()
-        local cursor_pos = vim.api.nvim_win_get_cursor(0)
-        local line_num = cursor_pos[1]
-        local filename = vim.api.nvim_buf_get_lines(file_manager_buf, line_num - 1, line_num, false)[1]
-        local filepath = cwd .. '/' .. filename
-
-        local confirm = vim.fn.input('Do you really want to delete ' .. filename .. '? (y/N): ')
-        if confirm == 'y' then
-            vim.fn.delete(filepath)
-            display_files()
-        end
-        -- Очищаем строку ввода после завершения
-        vim.cmd("normal :<C-u>")  -- Команда для очистки строки команд
-    end
-
-    -- Функция для удаления директории с рекурсией (rm -rf)
+    -- Функция для удаления с рекурсией (rm -rf)
     function _G.delete_dir_recursive()
         local cursor_pos = vim.api.nvim_win_get_cursor(0)
         local line_num = cursor_pos[1]
         local filename = vim.api.nvim_buf_get_lines(file_manager_buf, line_num - 1, line_num, false)[1]
         local filepath = cwd .. '/' .. filename
 
-        local confirm = vim.fn.input('Do you really want to delete the directory ' .. filename .. ' and all its contents? (y/N): ')
+        local confirm = vim.fn.input('Do you really want to delete ' .. filename .. ' and all its contents? (y/N): ')
         if confirm == 'y' then
             vim.fn.delete(filepath, 'rf')
             display_files()
@@ -521,8 +505,8 @@ function _G.open_file_manager()
     -- Привязка нажатия Backspace к функции go_back
     vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', '<BS>', ':lua _G.go_back()<CR>', { noremap = true, silent = true })
 
-    -- Привязка для создания файла "t"
-    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 't', ':lua _G.create_file()<CR>', { noremap = true, silent = true })
+    -- Привязка для создания файла "tt"
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'tt', ':lua _G.create_file()<CR>', { noremap = true, silent = true })
     
     -- Привязка для создания директории "td"
     vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'td', ':lua _G.create_dir()<CR>', { noremap = true, silent = true })
@@ -539,11 +523,8 @@ function _G.open_file_manager()
     -- Привязка для вставки файла "p"
     vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'p', ':lua _G.paste_file()<CR>', { noremap = true, silent = true })
 
-    -- Привязка для удаления файла "rm"
-    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'rm', ':lua _G.delete_file()<CR>', { noremap = true, silent = true })
-
-    -- Привязка для рекурсивного удаления директории "rmr"
-    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'rmr', ':lua _G.delete_dir_recursive()<CR>', { noremap = true, silent = true })
+    -- Привязка для рекурсивного удаления "rm"
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'rm', ':lua _G.delete_dir_recursive()<CR>', { noremap = true, silent = true })
 end
 
 -- Привязка Ctrl+n к функции открытия файлового менеджера

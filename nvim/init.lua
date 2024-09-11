@@ -525,6 +525,9 @@ function _G.open_file_manager()
 
     -- Привязка для рекурсивного удаления "rm"
     vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'rm', ':lua _G.delete_dir_recursive()<CR>', { noremap = true, silent = true })
+
+    -- Привязка нажатия q к функции закрытия вкладки и удаления буфера
+    vim.api.nvim_buf_set_keymap(file_manager_buf, 'n', 'q', ':bd!<CR>', { noremap = true, silent = true })
 end
 
 -- Привязка Ctrl+n к функции открытия файлового менеджера

@@ -74,6 +74,7 @@ pip install pyright
       - **Rename/Move File or Directory**: Select the file or directory, press `mv`, navigate to the new location, and press `p` to paste. Optionally, you can rename it during the move.
       - **Copy File or Directory**: Select the file or directory, press `cp`, navigate to the destination, and press `p` to paste. Optionally, you can rename it during the copy.
       - **Delete Recursively**: Press `rm` and confirm the deletion of all its contents by typing `y` (default is `N`).
+    - **Exit**: Exit whith `q`.
   - **Normal file saving**: Use `Ctrl + s`.
   - **Navigate Tabs**: Use `Tab` and `Shift + Tab` to switch between tabs.
   - **LazyGit**: Use `lg` to open LazyGit in normal mode.

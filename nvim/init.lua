@@ -788,11 +788,20 @@ cmp.setup({
 })
 
 -- Настройка LSP серверов
-local servers = { 'pyright', 'ts_ls'}
-
+local servers = { 'pyright', 'ts_ls', 'jdtls'}
+local android_sdk = '/home/grisha/.local/share/android-sdk'
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    settings = {
+      java = {
+        project = {
+          referencedLibraries = {
+            android_sdk .. '/platforms/android-33/android.jar',
+          }
+        }
+      }
+    },
     on_attach = function(client, bufnr)
       -- Настройка ключевых привязок для LSP
       local opts = { noremap=true, silent=true }

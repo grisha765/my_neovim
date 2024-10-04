@@ -48,6 +48,7 @@ vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true }
 -- Настройка NetRW
 vim.api.nvim_set_keymap('n', '<C-n>', ':tabnew<CR>:Explore<CR>', { noremap = true, silent = true })
 vim.g.netrw_banner = 0
+vim.g.netrw_liststyle = 3
 
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()

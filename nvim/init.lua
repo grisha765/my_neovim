@@ -478,6 +478,7 @@ require('lazy').setup({
   'hrsh7th/cmp-cmdline', -- Источник командной строки
   'L3MON4D3/LuaSnip', -- Плагин для сниппетов
   'saadparwaiz1/cmp_luasnip', -- Источник для LuaSnip
+  'justinmk/vim-sneak', -- Удобный поиск
   { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' },
   { 'kdheepak/lazygit.nvim', 
 		cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },

@@ -479,6 +479,7 @@ require('lazy').setup({
   'L3MON4D3/LuaSnip', -- Плагин для сниппетов
   'saadparwaiz1/cmp_luasnip', -- Источник для LuaSnip
   'justinmk/vim-sneak', -- Удобный поиск
+  'windwp/nvim-autopairs', -- форматирование скобок
   { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' },
   { 'kdheepak/lazygit.nvim', 
 		cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },
@@ -587,6 +588,12 @@ require('nvim-treesitter.configs').setup {
     enable = true,
   },
 }
+
+-- Настройка nvim-autopairs
+require('nvim-autopairs').setup({
+  check_ts = true, -- использовать treesitter для более точной работы
+  map_cr = true, -- включить перенос строки с правильной позицией курсора
+})
 
 -- Установка цветовой схемы
 vim.cmd [[

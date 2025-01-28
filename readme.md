@@ -25,8 +25,8 @@ This is a custom Neovim configuration script written in Lua. It includes various
 
 ***Download configs***
 
-```shell
-mkdir -p ~/.config/nvim && mkdir -p ~/.config/lazygit && wget -O ~/.config/nvim/init.lua https://raw.githubusercontent.com/grisha765/my_neovim/main/nvim/init.lua && wget -O ~/.config/lazygit/config.yml https://raw.githubusercontent.com/grisha765/my_neovim/main/lazygit/config.yml && nvim
+```bash
+curl -s https://raw.githubusercontent.com/grisha765/my_neovim/main/install.sh | bash
 ```
 
 ### Install Windows

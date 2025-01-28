@@ -29,23 +29,6 @@ This is a custom Neovim configuration script written in Lua. It includes various
 curl -s https://raw.githubusercontent.com/grisha765/my_neovim/main/install.sh | bash
 ```
 
-### Install Windows
-
-***Download utils***
-
-- **Scoop**: 
-  - `scoop install neovim lazygit gcc nodejs`
-- **Chocolatey**: 
-  - `choco install neovim lazygit mingw nodejs`
-- **Winget**: 
-  - `winget install Neovim.Neovim jesseduffield.lazygit GNU.GCC OpenJS.NodeJS`
-
-***Download configs***
-
-```shell
-cmd.exe /c "mkdir %APPDATA%\lazygit & mkdir %USERPROFILE%\AppData\Local\nvim & curl -L "https://raw.githubusercontent.com/grisha765/my_neovim/main/nvim/init.lua" -o "%USERPROFILE%\AppData\Local\nvim\init.lua" --insecure & curl -L "https://raw.githubusercontent.com/grisha765/my_neovim/main/lazygit/config.yml" -o "%APPDATA%\lazygit\config.yml" --insecure & start nvim"
-```
-
 ### Autocomplete python
 
 ***Download pyright***

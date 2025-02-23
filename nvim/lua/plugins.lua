@@ -20,6 +20,7 @@ require('lazy').setup({
   'hrsh7th/cmp-buffer', -- Источник буфера
   'hrsh7th/cmp-path', -- Источник путей файловой системы
   'hrsh7th/cmp-cmdline', -- Источник командной строки
+  { 'j-hui/fidget.nvim', opts = {} }, -- Статус обновления LSP
   'L3MON4D3/LuaSnip', -- Плагин для сниппетов
   'saadparwaiz1/cmp_luasnip', -- Источник для LuaSnip
   'justinmk/vim-sneak', -- Удобный поиск
@@ -32,6 +33,12 @@ require('lazy').setup({
 	}, -- Плагин для удобного управления git
   -- VS Code Color Schemes
   'Mofiqul/vscode.nvim',
+  { 'nvim-telescope/telescope-file-browser.nvim', 
+    dependencies = { 'nvim-telescope/telescope.nvim',
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope-fzf-native.nvim',
+      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font } },
+  }, -- Удобный файловый менеджер
 })
 
 local lspconfig = require('lspconfig')
@@ -122,6 +129,7 @@ require('nvim-treesitter.configs').setup {
     "typescript", "tsx", "yaml", "xml", "bash", "toml", "dockerfile", 
     "regex", "markdown", "markdown_inline"
   },
+  auto_install = true,
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,
@@ -136,6 +144,21 @@ require('nvim-autopairs').setup({
   check_ts = true,
   map_cr = true,
 })
+
+-- Настройка telescope-file-browser
+require('telescope').setup({
+  extensions = {
+    file_browser = {
+      layout_strategy = 'horizontal',
+      layout_config = {
+        width = 0.99,
+        height = 0.99,
+      },
+    },
+  },
+})
+require('telescope').load_extension('file_browser')
+
 
 -- Установка цветовой схемы
 vim.cmd [[

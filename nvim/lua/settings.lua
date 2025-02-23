@@ -43,23 +43,14 @@ vim.api.nvim_set_keymap('i', '<C-s>', '<Esc>:w<CR>', { noremap = true, silent = 
 vim.api.nvim_set_keymap('v', '<Tab>', '>gv', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
 
--- Настройка NetRW
-vim.api.nvim_set_keymap('n', '<C-n>', ':tabnew<CR>:Explore<CR>', { noremap = true, silent = true })
-vim.g.netrw_banner = 0
-vim.g.netrw_liststyle = 3
+-- Открытие telescope-file-browser в новой вкладке
+vim.api.nvim_set_keymap('n', '<C-n>', ':tabnew<CR>:Telescope file_browser<CR>', { noremap = true, silent = true })
 
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     if vim.fn.argc() == 0 then
-      vim.cmd("Explore")
+      vim.cmd(":Telescope file_browser")
     end
-  end
-})
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "netrw",
-  callback = function()
-    vim.api.nvim_buf_set_keymap(0, "n", "q", ":q<CR>", { noremap = true, silent = true })
   end
 })
 

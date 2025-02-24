@@ -44,7 +44,7 @@ vim.api.nvim_set_keymap('v', '<Tab>', '>gv', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
 
 -- Открытие telescope-file-browser в новой вкладке
-vim.api.nvim_set_keymap('n', '<C-n>', ':tabnew<CR>:Telescope file_browser<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-n>", "<Cmd>lua openFileBrowserInNewTab()<CR>", { noremap = true, silent = true })
 
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()

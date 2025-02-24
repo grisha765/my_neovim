@@ -149,16 +149,36 @@ require('nvim-autopairs').setup({
 require('telescope').setup({
   extensions = {
     file_browser = {
+      sorting_strategy = 'ascending',
       layout_strategy = 'horizontal',
       layout_config = {
         width = 0.99,
         height = 0.99,
+        prompt_position = "top",
       },
     },
   },
 })
 require('telescope').load_extension('file_browser')
+local actions = require("telescope.actions")
+local fb = require("telescope").extensions.file_browser.file_browser
 
+_G.openFileBrowserInNewTab = function()
+  vim.cmd("tabnew") -- открываем новый таб
+  fb({
+    attach_mappings = function(prompt_bufnr, map)
+      local function closeTelescopeAndTab()
+        actions.close(prompt_bufnr)
+        vim.cmd("tabclose")
+      end
+
+      map("i", "<esc>", closeTelescopeAndTab)
+      map("n", "<esc>", closeTelescopeAndTab)
+
+      return true
+    end
+  })
+end
 
 -- Установка цветовой схемы
 vim.cmd [[

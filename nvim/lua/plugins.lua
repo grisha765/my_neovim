@@ -25,6 +25,7 @@ require('lazy').setup({
   'saadparwaiz1/cmp_luasnip', -- Источник для LuaSnip
   'justinmk/vim-sneak', -- Удобный поиск
   'windwp/nvim-autopairs', -- Форматирование скобок
+  'psliwka/vim-smoothie', -- Плавная прокрутка
   { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }, -- Подсветка кода
   { 'kdheepak/lazygit.nvim',
 		cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },

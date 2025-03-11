@@ -11,3 +11,5 @@ require('tabs')
 require('gpt')
 
 require('plugins')
+
+require('autosave')

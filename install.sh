@@ -16,6 +16,7 @@ lua_modules=(
   "settings.lua"
   "tabs.lua"
   "terminal.lua"
+  "autosave.lua"
   )
 
 for file in "${lua_modules[@]}"; do

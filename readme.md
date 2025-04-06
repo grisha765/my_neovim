@@ -13,15 +13,15 @@ This is a custom Neovim configuration script written in Lua. It includes various
 ***Download utils***
 
 - **Arch Linux**: 
-  - `sudo pacman -S neovim lazygit nodejs npm`
+  - `sudo pacman -S neovim lazygit nodejs npm gcc base-devel`
 - **Debian**: 
-  - `sudo apt update && sudo apt install neovim nodejs npm && sudo add-apt-repository ppa:lazygit-team/release && sudo apt update && sudo apt install lazygit`
+  - `sudo apt update && sudo apt install neovim nodejs npm gcc && sudo add-apt-repository ppa:lazygit-team/release && sudo apt update && sudo apt install lazygit`
 - **Fedora**: 
-  - `sudo dnf install neovim nodejs npm && sudo dnf copr enable atim/lazygit -y && sudo dnf install lazygit`
+  - `sudo dnf install neovim nodejs npm gcc && sudo dnf copr enable atim/lazygit -y && sudo dnf install lazygit`
 - **macOS**: 
-  - `brew install neovim lazygit node`
+  - `brew install neovim lazygit node gcc`
 - **Termux**: 
-  - `pkg install neovim lazygit nodejs`
+  - `pkg install neovim lazygit nodejs gcc`
 
 ***Download configs***
 

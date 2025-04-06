@@ -14,6 +14,8 @@ This is a custom Neovim configuration script written in Lua. It includes various
 
 - **Arch Linux**: 
   - `sudo pacman -S neovim lazygit nodejs npm gcc base-devel`
+- **Alpine Linux**:
+  - `apk add neovim lazygit nodejs gcc musl-dev`
 - **Debian**: 
   - `sudo apt update && sudo apt install neovim nodejs npm gcc && sudo add-apt-repository ppa:lazygit-team/release && sudo apt update && sudo apt install lazygit`
 - **Fedora**: 

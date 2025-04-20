@@ -46,14 +46,6 @@ vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true }
 -- Открытие telescope-file-browser в новой вкладке
 vim.api.nvim_set_keymap("n", "<C-n>", "<Cmd>lua openFileBrowserInNewTab()<CR>", { noremap = true, silent = true })
 
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    if vim.fn.argc() == 0 then
-      vim.cmd(":Telescope file_browser")
-    end
-  end
-})
-
 -- Устанавливаем глобальные настройки по умолчанию для всех файлов
 vim.opt.expandtab = true  -- Преобразовывать табы в пробелы
 vim.opt.tabstop = 2       -- Количество пробелов, соответствующих одному табу

@@ -25,32 +25,35 @@ This is a custom Neovim configuration script written in Lua. It includes various
 - **Termux**: 
   - `pkg install neovim lazygit nodejs gcc`
 
-***Download configs***
+- Download configs:
+    ```bash
+    curl -s https://raw.githubusercontent.com/grisha765/my_neovim/main/install.sh | bash
+    ```
 
-```bash
-curl -s https://raw.githubusercontent.com/grisha765/my_neovim/main/install.sh | bash
-```
+- Download with podman:
+    ```bash
+    podman run --rm -it \
+            -v $HOME/.config/nvim:/root/.config/nvim:Z \
+            -v $HOME/.cache/nvim:/root/.cache/nvim:Z \
+            -v $HOME/.local/share/nvim:/root/.local/share/nvim:Z \
+            -v $HOME/.config/lazygit:/root/.config/lazygit:Z \
+            fedora bash -c \
+                    "dnf install -y neovim gcc git && \
+                            curl -s https://raw.githubusercontent.com/grisha765/my_neovim/main/install.sh | bash"
+    ```
 
-***Download with podman***
+### Autocomplete
 
-```bash
-podman run --rm -it \
-        -v $HOME/.config/nvim:/root/.config/nvim:Z \
-        -v $HOME/.cache/nvim:/root/.cache/nvim:Z \
-        -v $HOME/.local/share/nvim:/root/.local/share/nvim:Z \
-        -v $HOME/.config/lazygit:/root/.config/lazygit:Z \
-        fedora bash -c \
-                "dnf install -y neovim gcc git && \
-                        curl -s https://raw.githubusercontent.com/grisha765/my_neovim/main/install.sh | bash"
-```
+- Download pyright:
+    ```bash
+    python -m ensurepip --upgrade &&\
+    python -m pip install pyright
+    ```
 
-### Autocomplete python
-
-***Download pyright***
-
-```shell
-pip install pyright
-```
+- Download ts lang server:
+    ```bash
+    sudo npm install typescript-language-server -g
+    ```
 
 ### Key Features
 

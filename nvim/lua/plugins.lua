@@ -150,6 +150,7 @@ require('nvim-autopairs').setup({
 require('telescope').setup({
   extensions = {
     file_browser = {
+      hijack_netrw = true,
       sorting_strategy = 'ascending',
       layout_strategy = 'horizontal',
       layout_config = {
@@ -160,6 +161,7 @@ require('telescope').setup({
     },
   },
 })
+
 require('telescope').load_extension('file_browser')
 local actions = require("telescope.actions")
 local fb = require("telescope").extensions.file_browser.file_browser

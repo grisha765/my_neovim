@@ -78,4 +78,4 @@ for i in "${lua_modules[@]}"; do
   fi
 done
 
-nvim
+nvim --headless +qa

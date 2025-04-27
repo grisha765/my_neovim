@@ -126,11 +126,10 @@ end
 -- Настройка Treesitter
 require('nvim-treesitter.configs').setup {
   ensure_installed = {
-    "c", "cpp", "lua", "python", "javascript", "html", "css", "json", 
-    "typescript", "tsx", "yaml", "xml", "bash", "toml", "dockerfile", 
-    "regex", "markdown", "markdown_inline"
+    "python", "javascript", 
+    "typescript", "tsx"
   },
-  auto_install = true,
+  auto_install = false,
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,

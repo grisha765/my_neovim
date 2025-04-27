@@ -1,22 +1,49 @@
--- Функция для включения/выключения подсветки всех вхождений слова под курсором
-function _G.toggle_highlight_word()
-  if vim.b.highlight_word_enabled then
-    vim.cmd("silent! syntax clear WordUnderCursor")
-    vim.b.highlight_word_enabled = false
-  else
-    local word = vim.fn.expand('<cword>')
-    if word ~= '' then
-      vim.cmd(string.format('syntax match WordUnderCursor "\\<%s\\>"', word))
-      vim.cmd('highlight WordUnderCursor cterm=bold ctermbg=lightyellow guibg=#00008B')
-      vim.b.highlight_word_enabled = true
-    end
-  end
+local function set_word_color()
+  vim.api.nvim_set_hl(0, 'WordUnderCursor', {
+    bold     = true,
+    fg       = '#ffffff',
+    bg       = '#005fdd',
+    ctermfg  = 'white',
+    ctermbg  = 'Blue',
+  })
 end
 
--- Привязываем функцию к клавише 'f' (в нормальном режиме)
-vim.api.nvim_set_keymap('n', 'f', ':lua _G.toggle_highlight_word()<CR>', { noremap = true, silent = true })
+set_word_color()
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern  = '*',
+  callback = set_word_color,
+})
 
--- Инициализация функции для подсветки цветовых кодов
+local ns_id = vim.api.nvim_create_namespace('WordUnderCursor')
+
+function _G.toggle_highlight_word()
+  vim.api.nvim_buf_clear_namespace(0, ns_id, 0, -1)
+
+  if vim.b.word_highlight_active then
+    vim.b.word_highlight_active = nil
+    return
+  end
+
+  local word = vim.fn.expand('<cword>')
+  if word == '' then return end
+
+  local lines   = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  local pattern = vim.pesc(word)
+
+  for lnum, line in ipairs(lines) do
+    for start_, finish_ in line:gmatch('()' .. pattern .. '()') do
+      vim.api.nvim_buf_add_highlight(
+        0, ns_id, 'WordUnderCursor',
+        lnum - 1, start_ - 1, finish_ - 1
+      )
+    end
+  end
+
+  vim.b.word_highlight_active = true
+end
+
+vim.keymap.set('n', 'f', _G.toggle_highlight_word, { silent = true })
+
 function highlight_color_codes()
   local color_pattern = "#%x%x%x%x%x%x"
   local function add_highlight(group, color)
@@ -38,7 +65,6 @@ function highlight_color_codes()
   end
 end
 
--- Автокоманда для обновления подсветки при изменении буфера
 vim.cmd([[
   augroup ColorCodeHighlight
     autocmd!

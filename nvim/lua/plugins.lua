@@ -26,7 +26,7 @@ require('lazy').setup({
   'justinmk/vim-sneak', -- Удобный поиск
   'windwp/nvim-autopairs', -- Форматирование скобок
   'psliwka/vim-smoothie', -- Плавная прокрутка
-  { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }, -- Подсветка кода
+  { 'nvim-treesitter/nvim-treesitter', build = ":TSUpdate" }, -- Подсветка кода
   { 'kdheepak/lazygit.nvim',
 		cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },
 		dependencies = { "nvim-lua/plenary.nvim", },
@@ -130,6 +130,7 @@ require('nvim-treesitter.configs').setup {
     "typescript", "tsx"
   },
   auto_install = false,
+  sync_install = #vim.api.nvim_list_uis() == 0,
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,

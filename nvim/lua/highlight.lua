@@ -28,7 +28,7 @@ function _G.toggle_highlight_word()
   if word == '' then return end
 
   local lines   = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-  local pattern = vim.pesc(word)
+  local pattern = '%f[%w]' .. vim.pesc(word) .. '%f[^%w]'
 
   for lnum, line in ipairs(lines) do
     for start_, finish_ in line:gmatch('()' .. pattern .. '()') do

@@ -6,6 +6,7 @@ vim.opt.number = true
 
 -- Установить привязку клавиш 'jk' для выхода из режима вставки
 vim.api.nvim_set_keymap('i', 'jk', '<Esc>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-o>', '<Nop>', { noremap = true, silent = true })
 
 -- Включить подсветку синтаксиса
 vim.cmd('syntax on')

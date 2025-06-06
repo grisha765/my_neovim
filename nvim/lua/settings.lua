@@ -35,9 +35,9 @@ vim.keymap.set('n', '[o', 'o<Esc>', opts)
 -- vim.api.nvim_set_keymap('v', '<C-c>', '"+y', { noremap = true, silent = true })
 
 -- Настройка Ctrl + V для вставки из системного буфера обмена
--- vim.api.nvim_set_keymap('n', '<C-v>', '"+p', { noremap = true, silent = true })
--- vim.api.nvim_set_keymap('i', '<C-v>', '<Esc>"+pa', { noremap = true, silent = true })
--- vim.api.nvim_set_keymap('c', '<C-v>', '<C-r>+', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-v>', '"+p', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-v>', '<Esc>"+pa', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('c', '<C-v>', '<C-r>+', { noremap = true, silent = true })
 
 -- Настройка Ctrl + X для вырезания в системный буфер обмена
 -- vim.api.nvim_set_keymap('v', '<C-x>', '"+d', { noremap = true, silent = true })

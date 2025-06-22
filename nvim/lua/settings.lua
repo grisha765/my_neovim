@@ -1,12 +1,15 @@
 -- Включить номера строк
 vim.opt.number = true
 
+-- Выключить мышь
+vim.o.mouse = ''
+
 -- Изменить цвет фона
 -- vim.cmd('highlight Normal guibg=1E1E1E')
 local opts = { noremap = true, silent = true }
 
 -- Установить привязку клавиш 'jk' для выхода из режима вставки
-vim.api.nvim_set_keymap('i', 'jk', '<Esc>', opts)
+vim.api.nvim_set_keymap('i', 'jk', '<Insert>', opts)
 
 -- Отключить ctrl + o в нормальном режиме
 vim.keymap.set('n', '<C-o>', '<Nop>', opts)
@@ -15,7 +18,6 @@ vim.keymap.set('n', '<C-o>', '<Nop>', opts)
 vim.cmd('syntax on')
  
 -- Переключение между Normal и Insert с помощью клавиши "INSERT"
-vim.api.nvim_set_keymap('n', '<Insert>', 'i', { noremap = true })
 vim.api.nvim_set_keymap('i', '<Insert>', '<Esc>', { noremap = true })
 
 -- Доступ к системному буферу
@@ -25,11 +27,8 @@ vim.opt.clipboard = "unnamedplus"
 vim.keymap.set('n', 'd',  '"_d',  opts)
 vim.keymap.set('n', 'D',  '"_D',  opts)
 vim.keymap.set('n', 'dd', '"_dd', opts)
+vim.keymap.set('n', 'x',  '"_x',  opts)
 vim.keymap.set('x', 'd',  '"_d',  opts)
-
--- Создать строку без перехода в Insert
-vim.keymap.set('n', '[O', 'O<Esc>', opts)
-vim.keymap.set('n', '[o', 'o<Esc>', opts)
 
 -- Настройка Ctrl + C для копирования в системный буфер обмена
 -- vim.api.nvim_set_keymap('v', '<C-c>', '"+y', { noremap = true, silent = true })

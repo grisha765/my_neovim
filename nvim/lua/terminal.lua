@@ -92,6 +92,7 @@ end
 -- Шорткаты для переключения терминала в Normal- и Terminal-режиме
 vim.api.nvim_set_keymap('n', '<C-t>', ':lua toggle_terminal()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('t', '<C-t>', '<C-\\><C-n>:lua toggle_terminal()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('t', '<Insert>', '<C-\\><C-n>', { noremap = true, silent = true })
 
 -- Автокоманда: на каждом WinEnter проверяем, вышли ли мы из терминала
 vim.api.nvim_exec([[
